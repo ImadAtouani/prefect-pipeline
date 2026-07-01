@@ -193,23 +193,23 @@ docker-compose ps
 **Résultat attendu :**
 ```
 NAME                                STATE    PORTS
-prefect-pipeline-postgres-1         Up (healthy)   5432/tcp
-prefect-pipeline-redis-1            Up (healthy)   6379/tcp
-prefect-pipeline-prefect-server-1   Up (healthy)   0.0.0.0:4200->4200/tcp
-prefect-pipeline-prefect-services-1 Up             4200/tcp
-prefect-pipeline-prefect-worker-1   Up             4200/tcp
-prefect-pipeline-mongodb-1          Up (healthy)   0.0.0.0:27017->27017/tcp
-prefect-pipeline-otel_collector-1   Up             0.0.0.0:4317->4317/tcp, 0.0.0.0:4318->4318/tcp, 0.0.0.0:8890->8890/tcp
-prefect-pipeline-prometheus-1       Up             0.0.0.0:9090->9090/tcp
-prefect-pipeline-tempo-1            Up             0.0.0.0:3200->3200/tcp, 0.0.0.0:55680->55680/tcp
-prefect-pipeline-grafana-1          Up             0.0.0.0:3000->3000/tcp
+prefect-postgres-1         Up (healthy)   5432/tcp
+prefect-redis-1            Up (healthy)   6379/tcp
+prefect-prefect-server-1   Up (healthy)   0.0.0.0:4200->4200/tcp
+prefect-prefect-services-1 Up             4200/tcp
+prefect-prefect-worker-1   Up             4200/tcp
+prefect-mongodb-1          Up (healthy)   0.0.0.0:27017->27017/tcp
+prefect-otel_collector-1   Up             0.0.0.0:4317->4317/tcp, 0.0.0.0:4318->4318/tcp, 0.0.0.0:8890->8890/tcp
+prefect-prometheus-1       Up             0.0.0.0:9090->9090/tcp
+prefect-tempo-1            Up             0.0.0.0:3200->3200/tcp, 0.0.0.0:55680->55680/tcp
+prefect-grafana-1          Up             0.0.0.0:3000->3000/tcp
 ```
 
 ### 6. Déployer les flows dans Prefect
 
 ```bash
 # Accéder au conteneur worker
-docker exec -it prefect-pipeline-prefect-worker-1 bash
+docker exec -it prefect-prefect-worker-1 bash
 
 # Déployer les flows
 python /app/deployments/deploy.py
@@ -339,7 +339,7 @@ curl -X POST "http://localhost:4200/api/deployments/metrics-pipeline/run" \
 
 ```bash
 # Connexion à MongoDB
-docker exec -it prefect-pipeline-mongodb-1 mongosh -u admin -p changeme
+docker exec -it prefect-mongodb-1 mongosh -u admin -p changeme
 
 # Dans le shell MongoDB
 use data_pipeline
@@ -609,7 +609,7 @@ docker-compose logs mongodb
 
 ```bash
 # 1. Vérifier que metrics_flow.py est bien déployé
-docker exec -it prefect-pipeline-prefect-worker-1 prefect deployment ls
+docker exec -it prefect-prefect-worker-1 prefect deployment ls
 
 # 2. Exécuter le flow de métriques
 curl -X POST "http://localhost:4200/api/deployments/metrics-pipeline/run" \
@@ -624,30 +624,30 @@ curl -s http://localhost:8890/metrics | grep "prefect"
 
 ```bash
 # Copier les fichiers dans le conteneur
-docker cp data/. prefect-pipeline-prefect-worker-1:/app/data/
+docker cp data/. prefect-prefect-worker-1:/app/data/
 
 # Vérifier
-docker exec -it prefect-pipeline-prefect-worker-1 ls -la /app/data/
+docker exec -it prefect-prefect-worker-1 ls -la /app/data/
 ```
 
 ### Le déploiement ne s'affiche pas dans l'UI
 
 ```bash
 # Vérifier que le worker est en ligne
-docker exec -it prefect-pipeline-prefect-worker-1 prefect worker status --pool local-pool
+docker exec -it prefect-prefect-worker-1 prefect worker status --pool local-pool
 
 # Relancer le déploiement
-docker exec -it prefect-pipeline-prefect-worker-1 python /app/deployments/deploy.py
+docker exec -it prefect-prefect-worker-1 python /app/deployments/deploy.py
 
 # Vérifier les déploiements
-docker exec -it prefect-pipeline-prefect-worker-1 prefect deployment ls
+docker exec -it prefect-prefect-worker-1 prefect deployment ls
 ```
 
 ### Nettoyer les données et recommencer
 
 ```bash
 # Nettoyer MongoDB
-docker exec -it prefect-pipeline-mongodb-1 mongosh -u admin -p changeme --eval '
+docker exec -it prefect-mongodb-1 mongosh -u admin -p changeme --eval '
 use data_pipeline;
 db.raw_data.deleteMany({});
 db.normalized_data.deleteMany({});
@@ -697,7 +697,7 @@ docker-compose logs --tail=100 prefect-server
 
 ```bash
 # Accéder au conteneur worker
-docker exec -it prefect-pipeline-prefect-worker-1 bash
+docker exec -it prefect-prefect-worker-1 bash
 
 # Lister les déploiements
 prefect deployment ls
@@ -719,7 +719,7 @@ prefect worker status --pool local-pool
 
 ```bash
 # Connexion à MongoDB
-docker exec -it prefect-pipeline-mongodb-1 mongosh -u admin -p changeme
+docker exec -it prefect-mongodb-1 mongosh -u admin -p changeme
 
 use data_pipeline
 show collections
@@ -755,7 +755,7 @@ curl -X POST 'http://localhost:9090/api/v1/admin/tsdb/clean_tombstones'
 ### Nettoyage complet des données
 
 ```bash
-docker exec -it prefect-pipeline-mongodb-1 mongosh -u admin -p changeme --eval '
+docker exec -it prefect-mongodb-1 mongosh -u admin -p changeme --eval '
 use data_pipeline;
 db.raw_data.deleteMany({});
 db.normalized_data.deleteMany({});
@@ -785,9 +785,6 @@ print("✅ Toutes les données supprimées");
 ### Dépendances Python
 
 ```txt
-# Prefect et dépendances
-prefect==3.0.0
-
 # Base de données
 pymongo==4.6.1
 
