@@ -14,7 +14,6 @@ processors:
 exporters:
   prometheus:
     endpoint: "0.0.0.0:8890"
-    namespace: prefect
   
   otlp:
     endpoint: tempo:55680

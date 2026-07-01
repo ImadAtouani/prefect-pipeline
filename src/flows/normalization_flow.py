@@ -5,17 +5,17 @@ from prefect.artifacts import create_markdown_artifact
 import json
 from datetime import datetime
 
-from ..tasks.ingestion import ingestion_task
-from ..tasks.profiling import profiling_task
-from ..tasks.parsing import parsing_task
-from ..tasks.mapping import mapping_task
-from ..tasks.cleaning import cleaning_task
-from ..tasks.typing import typing_task
-from ..tasks.standardization import standardization_task
-from ..tasks.dedup import dedup_task
-from ..tasks.validation import validation_task
-from ..tasks.enrichment import enrichment_task
-from ..tasks.mongodb_writer import mongodb_writer_task
+from src.tasks.ingestion import ingestion_task
+from src.tasks.profiling import profiling_task
+from src.tasks.parsing import parsing_task
+from src.tasks.mapping import mapping_task
+from src.tasks.cleaning import cleaning_task
+from src.tasks.typing import typing_task
+from src.tasks.standardization import standardization_task
+from src.tasks.dedup import dedup_task
+from src.tasks.validation import validation_task
+from src.tasks.enrichment import enrichment_task
+from src.tasks.mongodb_writer import mongodb_writer_task
 
 
 @flow(

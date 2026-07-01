@@ -3,8 +3,8 @@ from prefect import flow
 from prefect.artifacts import create_markdown_artifact
 from datetime import datetime
 
-from ..utils.mongodb import get_collection
-from ..utils.metrics import send_metric
+from src.utils.mongodb import get_collection
+from src.utils.metrics import send_metric
 
 
 @flow(
@@ -36,6 +36,20 @@ def metrics_flow():
         send_metric("prefect.rejected.data.total", rej, "1", "Total rejected data")
         send_metric("prefect.raw.pending.total", pending, "1", "Pending data")
         
+        # === 1bis. RÉPARTITION PAR SOURCE ===
+        source_breakdown = raw_collection.aggregate([
+            {"$group": {"_id": "$source_type", "count": {"$sum": 1}}}
+        ])
+        for entry in source_breakdown:
+            source_type = entry["_id"] or "unknown"
+            send_metric(
+                "prefect.raw.by.source",
+                entry["count"],
+                "1",
+                f"Raw data count for source {source_type}",
+                {"source_type": source_type}
+            )
+        
         # === 2. MÉTRIQUES DE LATENCE ===
         scripts = ["ingestion", "profiling", "parsing", "mapping", "cleaning", 
                    "typing", "standardization", "dedup", "validation", "enrichment", "mongodb_writer"]
@@ -52,6 +66,20 @@ def metrics_flow():
                     duration,
                     "ms",
                     f"Last execution duration for {script}",
+                    {"script": script}
+                )
+            
+            last_10 = list(metrics_collection.find(
+                {"script": script}
+            ).sort("timestamp", -1).limit(10))
+            if last_10:
+                durations = [m.get("duration_ms", 0) for m in last_10]
+                avg_duration = sum(durations) / len(durations)
+                send_metric(
+                    "prefect.latency.avg",
+                    round(avg_duration, 2),
+                    "ms",
+                    f"Average execution duration (last 10) for {script}",
                     {"script": script}
                 )
         
