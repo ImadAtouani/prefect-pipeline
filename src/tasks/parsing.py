@@ -52,12 +52,15 @@ def extract_data_from_html(html_data):
 
 
 @task(name="parsing", log_prints=True)
-def parsing_task(raw_data, format: str = "json"):
+def parsing_task(profiling_result: dict, format: str = "json"):
     """Parsing - CSV, Excel, JSON, HTML, Parquet"""
     start_time = time.time()
     
     try:
         print(f"📊 Parsing du format: {format}")
+        
+        raw_data = profiling_result["raw_data"]
+        profile = profiling_result.get("profile", {})
         
         if isinstance(raw_data, list):
             records = raw_data[0] if raw_data else {"empty": True, "count": 0}
@@ -73,7 +76,8 @@ def parsing_task(raw_data, format: str = "json"):
         parsed_data = {
             "format": format,
             "records": records,
-            "record_count": len(records) if isinstance(records, (dict, list)) else 1
+            "record_count": len(records) if isinstance(records, (dict, list)) else 1,
+            "profile": profile
         }
         
         duration_ms = (time.time() - start_time) * 1000

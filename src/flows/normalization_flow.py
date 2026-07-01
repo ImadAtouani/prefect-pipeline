@@ -99,7 +99,7 @@ def normalization_flow(
     
     # === ÉTAPE 3: PARSING ===
     print("\n🔍 ÉTAPE 3: PARSING")
-    result_parsing = parsing_task(raw_data, format=format or source_type)
+    result_parsing = parsing_task(result_profiling, format=format or source_type)
     
     # === ÉTAPE 4: MAPPING ===
     print("\n🔄 ÉTAPE 4: MAPPING")
@@ -164,6 +164,7 @@ def normalization_flow(
         "source_type": source_type,
         "source_path": source_path,
         "ingestion_duration_ms": result_ingestion["duration_ms"],
+        "profile": result_profiling["profile"],
         "validation_errors": result_validation["errors"],
         "validation_warnings": result_validation["warnings"],
         "write_result": result_write,
@@ -181,6 +182,10 @@ def normalization_flow(
     - **Source**: {source_type} - {source_path}
     - **Durée ingestion**: {result_ingestion["duration_ms"]:.2f} ms
     - **Exécution**: {datetime.now().isoformat()}
+    
+    ## Profilage
+    - **Colonnes**: {result_profiling["profile"]["column_count"]}
+    - **Noms des colonnes**: {", ".join(result_profiling["profile"]["columns"])}
     
     ## Validation
     - **Valide**: {result_validation["is_valid"]}

@@ -169,6 +169,20 @@ def ingestion_task(source_type: str, source_path: str, **kwargs):
     start_time = time.time()
     
     try:
+        # Les paramètres headers/params/data/variables arrivent en chaînes JSON
+        # (ex: '{}' ou '{"Authorization": "Bearer xyz"}') depuis le flow ;
+        # il faut les parser en dict avant de les transmettre à requests.
+        for key in ("headers", "params", "data", "variables"):
+            if key in kwargs and isinstance(kwargs[key], str):
+                raw_value = kwargs[key].strip()
+                if not raw_value:
+                    kwargs[key] = {}
+                else:
+                    try:
+                        kwargs[key] = json.loads(raw_value)
+                    except json.JSONDecodeError:
+                        raise ValueError(f"Paramètre '{key}' n'est pas un JSON valide: {kwargs[key]!r}")
+        
         actual_source_type = detect_source_type(source_type, source_path)
         print(f"🔍 Type de source détecté: {actual_source_type}")
         

@@ -54,6 +54,7 @@ def profiling_task(raw_data):
                 "null_values": null_values,
                 "columns": columns,
             },
+            "raw_data": raw_data,
             "duration_ms": round(duration_ms, 2)
         }
         

@@ -296,7 +296,7 @@ curl http://localhost:4200/api/health   # Prefect Server
 | **API GET avec params** | `{"source_type":"api","source_path":"https://jsonplaceholder.typicode.com/posts","method":"GET","params":"{\"userId\":1}"}` |
 | **API POST** | `{"source_type":"api","source_path":"https://jsonplaceholder.typicode.com/posts","method":"POST","headers":"{\"Content-Type\":\"application/json\"}","data":"{\"title\":\"Test\",\"body\":\"Test content\",\"userId\":1}"}` |
 | **GraphQL** | `{"source_type":"graphql","source_path":"https://rickandmortyapi.com/graphql","query":"query { characters(page:1) { results { id name status species } } }"}` |
-| **SQL** | `{"source_type":"sql","source_path":"postgresql://user:password@localhost:5432/mydb","query":"SELECT * FROM users LIMIT 5"}` |
+| **SQL** | `{"source_type": "sql","source_path": "postgresql://prefect:prefect@postgres:5432/prefect","query": "SELECT * FROM information_schema.tables LIMIT 5"}` |
 
 ### Méthode 2 : Via l'API Prefect
 
