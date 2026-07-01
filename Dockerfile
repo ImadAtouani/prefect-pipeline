@@ -21,8 +21,5 @@ COPY data/ /app/data/
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Revenir à l'utilisateur prefect
-USER prefect
-
 # Commande par défaut
 CMD ["prefect", "worker", "start", "--pool", "local-pool"]
