@@ -1,0 +1,237 @@
+{
+  "title": "Prefect Pipeline - Vue Globale",
+  "uid": "prefect-pipeline-overview",
+  "tags": ["prefect", "pipeline", "etl", "monitoring"],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "schemaVersion": 37,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "📊 Vue d'ensemble du Pipeline",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false
+    },
+    {
+      "id": 2,
+      "title": "Données brutes",
+      "type": "stat",
+      "gridPos": {"h": 3, "w": 8, "x": 0, "y": 1},
+      "targets": [{"expr": "prefect_raw_data_total_ratio", "refId": "A", "legendFormat": "Brutes"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]},
+          "unit": "short"
+        }
+      },
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"]}, "colorMode": "value", "graphMode": "area"}
+    },
+    {
+      "id": 3,
+      "title": "Données normalisées",
+      "type": "stat",
+      "gridPos": {"h": 3, "w": 8, "x": 8, "y": 1},
+      "targets": [{"expr": "prefect_normalized_data_total_ratio", "refId": "A", "legendFormat": "Normalisées"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "short"
+        }
+      },
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"]}, "colorMode": "value", "graphMode": "area"}
+    },
+    {
+      "id": 4,
+      "title": "Données rejetées",
+      "type": "stat",
+      "gridPos": {"h": 3, "w": 8, "x": 16, "y": 1},
+      "targets": [{"expr": "prefect_rejected_data_total_ratio", "refId": "A", "legendFormat": "Rejetées"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}]},
+          "unit": "short"
+        }
+      },
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"]}, "colorMode": "value", "graphMode": "area"}
+    },
+    {
+      "id": 7,
+      "title": "📈 Évolution des données",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "targets": [
+        {"expr": "prefect_raw_data_total_ratio", "legendFormat": "Brutes", "refId": "A"},
+        {"expr": "prefect_normalized_data_total_ratio", "legendFormat": "Normalisées", "refId": "B"},
+        {"expr": "prefect_rejected_data_total_ratio", "legendFormat": "Rejetées", "refId": "C"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {"axisPlacement": "auto", "drawStyle": "line", "fillOpacity": 10, "lineInterpolation": "linear", "lineWidth": 2},
+          "unit": "short"
+        }
+      },
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}}
+    },
+    {
+      "id": 8,
+      "title": "🍩 Répartition par source",
+      "type": "piechart",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "targets": [{"expr": "prefect_raw_by_source_ratio", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {"displayLabels": ["name", "percent"]}
+        }
+      },
+      "options": {"displayLabels": ["name", "percent"], "legend": {"displayMode": "list", "placement": "right"}}
+    },
+    {
+      "id": 9,
+      "title": "⏱️ Latence par tâche (dernière exécution)",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "targets": [
+        {"expr": "prefect_latency_last_milliseconds", "refId": "A", "legendFormat": "{{script}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "ms",
+          "custom": {"lineInterpolation": "linear", "barAlignment": 0, "barWidthFactor": 0.8}
+        }
+      },
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}}
+    },
+    {
+      "id": 10,
+      "title": "⏱️ Latence moyenne par tâche (10 dernières)",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "targets": [
+        {"expr": "prefect_latency_avg_milliseconds", "refId": "A", "legendFormat": "{{script}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "ms",
+          "custom": {"lineInterpolation": "linear", "barAlignment": 0, "barWidthFactor": 0.8}
+        }
+      },
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}}
+    },
+    {
+      "id": 11,
+      "title": "❌ Taux d'erreur par tâche",
+      "type": "barchart",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 20},
+      "targets": [
+        {"expr": "prefect_error_rate_percent", "refId": "A", "legendFormat": "{{script}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "orange", "value": 10},
+            {"color": "red", "value": 50}
+          ]},
+          "unit": "percent",
+          "custom": {"lineInterpolation": "linear", "barAlignment": 0, "barWidthFactor": 0.8}
+        }
+      },
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}}
+    },
+    {
+      "id": 12,
+      "title": "📊 Nombre d'erreurs vs succès par tâche",
+      "type": "barchart",
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 20},
+      "targets": [
+        {"expr": "prefect_errors_total_ratio", "legendFormat": "Erreurs", "refId": "A"},
+        {"expr": "prefect_success_total_ratio", "legendFormat": "Succès", "refId": "B"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short",
+          "custom": {"lineInterpolation": "linear", "barAlignment": 0, "barWidthFactor": 0.8}
+        }
+      },
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}}
+    },
+    {
+      "id": 13,
+      "title": "💻 CPU par tâche (dernière exécution)",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 26},
+      "targets": [
+        {"expr": "prefect_cpu_percent", "refId": "A", "legendFormat": "{{script}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "percent",
+          "custom": {"lineInterpolation": "linear", "barAlignment": 0, "barWidthFactor": 0.8}
+        }
+      },
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}}
+    },
+    {
+      "id": 14,
+      "title": "💾 Mémoire par tâche (dernière exécution)",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 26},
+      "targets": [
+        {"expr": "prefect_memory_mb_MB", "refId": "A", "legendFormat": "{{script}}"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "MB",
+          "custom": {"lineInterpolation": "linear", "barAlignment": 0, "barWidthFactor": 0.8}
+        }
+      },
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}}
+    },
+    {
+      "id": 15,
+      "title": "📊 Statistiques des données",
+      "type": "table",
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 34},
+      "targets": [
+        {"expr": "prefect_raw_data_total_ratio", "refId": "A", "legendFormat": "Brutes"},
+        {"expr": "prefect_normalized_data_total_ratio", "refId": "B", "legendFormat": "Normalisées"},
+        {"expr": "prefect_rejected_data_total_ratio", "refId": "C", "legendFormat": "Rejetées"}
+      ],
+      "fieldConfig": {
+        "defaults": {"custom": {"align": "auto"}, "unit": "short"}
+      },
+      "options": {"showHeader": true, "sortBy": [], "cellHeight": "sm"}
+    }
+  ],
+  "templating": {"list": []},
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {"type": "grafana", "uid": "-- Grafana --"},
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  }
+}
