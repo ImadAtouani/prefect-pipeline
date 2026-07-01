@@ -208,17 +208,11 @@ prefect-grafana-1          Up             0.0.0.0:3000->3000/tcp
 ### 6. Déployer les flows dans Prefect
 
 ```bash
-# Accéder au conteneur worker
-docker exec -it prefect-prefect-worker-1 bash
-
 # Déployer les flows
-python /app/deployments/deploy.py
+docker exec -it prefect-prefect-worker-1 python /app/deployments/deploy.py
 
 # Vérifier les déploiements
-prefect deployment ls
-
-# Sortir du conteneur
-exit
+docker exec -it prefect-prefect-worker-1 prefect deployment ls
 ```
 
 ---
@@ -272,7 +266,7 @@ curl http://localhost:4200/api/health   # Prefect Server
 #### Étape 2 : Exécuter le Flow
 
 1. Cliquez sur **"normalization-pipeline"**
-2. Cliquez sur le bouton **"Quick Run"**
+2. Cliquez sur le bouton **"Custom Run"** (pas "Quick Run", qui relance avec les derniers paramètres utilisés sans permettre de les modifier)
 3. Remplissez les paramètres :
    - `source_type`: `csv` (ou autre)
    - `source_path`: `/app/data/sales_2024.csv`

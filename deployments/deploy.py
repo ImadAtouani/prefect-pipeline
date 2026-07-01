@@ -1,46 +1,48 @@
 """Script de déploiement des flows Prefect"""
-import os
 import sys
 sys.path.insert(0, '/app')
 
-from prefect.deployments import Deployment
-from prefect.server.schemas.schedules import IntervalSchedule
 from datetime import timedelta
 
-from src.flows.normalization_flow import normalization_flow
-from src.flows.metrics_flow import metrics_flow
+from prefect import flow
+
+SOURCE = "/app"
 
 
 def deploy_normalization_flow():
     """Déploie le flow de normalisation"""
-    deployment = Deployment.build_from_flow(
-        flow=normalization_flow,
+    normalization_flow = flow.from_source(
+        source=SOURCE,
+        entrypoint="src/flows/normalization_flow.py:normalization_flow",
+    )
+    normalization_flow.deploy(
         name="normalization-pipeline",
+        work_pool_name="local-pool",
         version="1.0.0",
         description="Pipeline de normalisation de données",
         parameters={
             "source_type": "csv",
             "source_path": "/app/data/sales_2024.csv"
         },
-        work_pool_name="local-pool",
-        tags=["data", "etl", "normalization"]
+        tags=["data", "etl", "normalization"],
     )
-    deployment.apply()
     print("✅ Déploiement 'normalization-pipeline' créé avec succès")
 
 
 def deploy_metrics_flow():
     """Déploie le flow de métriques"""
-    deployment = Deployment.build_from_flow(
-        flow=metrics_flow,
+    metrics_flow = flow.from_source(
+        source=SOURCE,
+        entrypoint="src/flows/metrics_flow.py:metrics_flow",
+    )
+    metrics_flow.deploy(
         name="metrics-pipeline",
+        work_pool_name="local-pool",
         version="1.0.0",
         description="Flow de métriques du pipeline",
-        work_pool_name="local-pool",
         tags=["monitoring", "metrics", "observability"],
-        schedule=IntervalSchedule(interval=timedelta(minutes=5))
+        interval=timedelta(minutes=5),
     )
-    deployment.apply()
     print("✅ Déploiement 'metrics-pipeline' créé avec succès")
 
 
@@ -48,7 +50,7 @@ if __name__ == "__main__":
     print("=" * 60)
     print("🚀 DÉPLOIEMENT DES FLOWS PRECEF")
     print("=" * 60)
-    
+
     try:
         deploy_normalization_flow()
         deploy_metrics_flow()
