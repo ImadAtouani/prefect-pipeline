@@ -294,7 +294,7 @@ curl http://localhost:4200/api/health   # Prefect Server
 | **HTML** | `{"source_type":"html","source_path":"/app/data/page.html"}` |
 | **API GET** | `{"source_type":"api","source_path":"https://jsonplaceholder.typicode.com/users/1","method":"GET"}` |
 | **API GET avec params** | `{"source_type":"api","source_path":"https://httpbin.org/get","method":"GET","params":"{"userId":1}"}` |
-| **API POST** | `{"source_type":"api","source_path":"https://httpbin.org/post","method":"POST","headers":"{"Content-Type":"application/json"}","data":"{"title":"Test","body":"Test content","userId":1}` |
+| **API POST** | `{"source_type":"api","source_path":"https://httpbin.org/post","method":"POST","headers":"{"Content-Type":"application/json"}","data":"{"title":"Test","body":"Test content","userId":1}"` |
 | **GraphQL** | `{"source_type":"graphql","source_path":"https://rickandmortyapi.com/graphql","query":"query { characters(page:1) { results { id name status species } } }"}` |
 | **SQL** | `{"source_type": "sql","source_path": "postgresql://prefect:prefect@postgres:5432/prefect","query": "SELECT * FROM information_schema.tables LIMIT 5"}` |
 
